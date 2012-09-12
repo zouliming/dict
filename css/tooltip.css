@@ -75,7 +75,7 @@
 }
 .tooltip {
 	visibility: visible;
-	font-size: 11px;
+	font-size: 15px;
 }
 .fade {
 	-webkit-transition: opacity 0.15s linear;

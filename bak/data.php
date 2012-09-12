@@ -8017,7 +8017,7 @@ $tableInfo=array (
     ),
     4 => 
     array (
-      'column_key' => '',
+      'column_key' => 'MUL',
       'extra' => '',
       'column_name' => 'coupon_couponacid',
       'column_type' => 'int(11)',
@@ -8823,9 +8823,9 @@ $tableInfo=array (
       'extra' => '',
       'column_name' => 'couponac_expire_type',
       'column_type' => 'tinyint(1)',
-      'column_default' => '0',
+      'column_default' => '1',
       'collation_name' => NULL,
-      'column_comment' => '0固定有效期1激活券',
+      'column_comment' => '1固定有效期2激活券',
     ),
     17 => 
     array (
@@ -31465,7 +31465,7 @@ $tableInfo=array (
       'column_key' => '',
       'extra' => '',
       'column_name' => 'email',
-      'column_type' => 'varchar(12)',
+      'column_type' => 'varchar(50)',
       'column_default' => NULL,
       'collation_name' => 'utf8_general_ci',
       'column_comment' => '',
@@ -36702,7 +36702,7 @@ $tableInfo=array (
       'column_comment' => '',
     ),
   ),
-  'sales_cost_201207' => 
+  'sales_cost_201208' => 
   array (
     0 => 
     array (
@@ -36825,7 +36825,7 @@ $tableInfo=array (
       'column_comment' => '',
     ),
   ),
-  'sales_cost_201208' => 
+  'sales_cost_201209' => 
   array (
     0 => 
     array (
@@ -39890,7 +39890,7 @@ $tableInfo=array (
       'column_comment' => '',
     ),
   ),
-  'sales_product_201207' => 
+  'sales_product_201208' => 
   array (
     0 => 
     array (
@@ -40103,7 +40103,7 @@ $tableInfo=array (
       'column_comment' => '',
     ),
   ),
-  'sales_product_201208' => 
+  'sales_product_201209' => 
   array (
     0 => 
     array (
@@ -45387,6 +45387,172 @@ $tableInfo=array (
       'column_comment' => '收货时间',
     ),
   ),
+  'w2_offshelve_detail' => 
+  array (
+    0 => 
+    array (
+      'column_key' => 'PRI',
+      'extra' => 'auto_increment',
+      'column_name' => 'od_id',
+      'column_type' => 'int(10) unsigned',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    1 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'od_om_id',
+      'column_type' => 'int(10)',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '下架单主表id',
+    ),
+    2 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'od_pod_id',
+      'column_type' => 'int(10)',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => 'podetail表 pod_id',
+    ),
+    3 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'od_type',
+      'column_type' => 'tinyint(2)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '商品类型 0-正常',
+    ),
+    4 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'od_oean',
+      'column_type' => 'varchar(30)',
+      'column_default' => NULL,
+      'collation_name' => 'utf8_general_ci',
+      'column_comment' => '商品条码',
+    ),
+    5 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'od_num',
+      'column_type' => 'int(10)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '应下货品数量',
+    ),
+    6 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'od_realnum',
+      'column_type' => 'int(11)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '实际下架数量',
+    ),
+    7 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'od_uid',
+      'column_type' => 'int(10)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '下架操作人',
+    ),
+    8 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'od_condition',
+      'column_type' => 'tinyint(2)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '0 -正常 1-删除',
+    ),
+  ),
+  'w2_offshelve_mst' => 
+  array (
+    0 => 
+    array (
+      'column_key' => 'PRI',
+      'extra' => 'auto_increment',
+      'column_name' => 'om_id',
+      'column_type' => 'int(10) unsigned',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    1 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'om_code',
+      'column_type' => 'varchar(20)',
+      'column_default' => NULL,
+      'collation_name' => 'utf8_general_ci',
+      'column_comment' => '批次下架单号',
+    ),
+    2 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'om_stockmst_name',
+      'column_type' => 'varchar(100)',
+      'column_default' => NULL,
+      'collation_name' => 'utf8_general_ci',
+      'column_comment' => '批次名称',
+    ),
+    3 => 
+    array (
+      'column_key' => 'MUL',
+      'extra' => '',
+      'column_name' => 'om_stockmst_id',
+      'column_type' => 'int(10)',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '批次号',
+    ),
+    4 => 
+    array (
+      'column_key' => 'MUL',
+      'extra' => '',
+      'column_name' => 'om_condition',
+      'column_type' => 'tinyint(2)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '0-正常 1-删除 2-审核  3-拣货完成并释放库位',
+    ),
+    5 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'om_aid',
+      'column_type' => 'int(10)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '管理员id',
+    ),
+    6 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'om_addtime',
+      'column_type' => 'int(10)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '添加时间',
+    ),
+  ),
   'w2_podetail' => 
   array (
     0 => 
@@ -46569,6 +46735,109 @@ $tableInfo=array (
       'column_default' => NULL,
       'collation_name' => 'utf8_general_ci',
       'column_comment' => '操作人名字',
+    ),
+  ),
+  'website_seo' => 
+  array (
+    0 => 
+    array (
+      'column_key' => 'PRI',
+      'extra' => 'auto_increment',
+      'column_name' => 'ws_id',
+      'column_type' => 'int(10) unsigned',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    1 => 
+    array (
+      'column_key' => 'MUL',
+      'extra' => '',
+      'column_name' => 'ws_cid',
+      'column_type' => 'int(11)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    2 => 
+    array (
+      'column_key' => 'MUL',
+      'extra' => '',
+      'column_name' => 'ws_page_level',
+      'column_type' => 'tinyint(4)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    3 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'ws_title',
+      'column_type' => 'varchar(255)',
+      'column_default' => NULL,
+      'collation_name' => 'utf8_general_ci',
+      'column_comment' => '',
+    ),
+    4 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'ws_keywords',
+      'column_type' => 'varchar(255)',
+      'column_default' => NULL,
+      'collation_name' => 'utf8_general_ci',
+      'column_comment' => '',
+    ),
+    5 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'ws_description',
+      'column_type' => 'varchar(255)',
+      'column_default' => NULL,
+      'collation_name' => 'utf8_general_ci',
+      'column_comment' => '',
+    ),
+    6 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'ws_ctime',
+      'column_type' => 'int(11)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    7 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'ws_uptime',
+      'column_type' => 'int(11)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    8 => 
+    array (
+      'column_key' => 'MUL',
+      'extra' => '',
+      'column_name' => 'ws_condition',
+      'column_type' => 'tinyint(1)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    9 => 
+    array (
+      'column_key' => 'MUL',
+      'extra' => '',
+      'column_name' => 'ws_type',
+      'column_type' => 'tinyint(1)',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '0 首页 1 特卖会 2 分类',
     ),
   ),
   'wms_check_stock' => 

@@ -15,6 +15,15 @@
 		    table tbody tr:hover td, .table tbody tr:hover th {
 			    background-color: #F5F5F5;
 			}
+            .c6 div{
+                display: inline;
+            }
+            .tableComment{
+                display: inline-block;
+                height: 20px;
+                max-width: 400px;
+                min-width: 30px;
+            }
 	    </style>
 	    <link href="css/tooltip.css" rel="stylesheet" type="text/css" />
 		<script src="js/jquery-1.8.1.min.js" type="text/javascript" language="javascript"></script>
@@ -23,54 +32,6 @@
         if (databases == '') {
             databases = 'mtim_test';
         }
-		function edit(obj){
-			var id = 'config__'+obj['id'];
-			val = $('#'+obj['id']).html();
-			obj.innerHTML = '<input type="text" rel="'+val+'" value="'+val+'" id="'+id+'" size="30" /><input type="button" value="修改" onclick="save_intro(\''+id+'\')" /><input type="button" value="取消" onclick="cancel_intro(\''+id+'\')" />';
-		}
-		function cancel_intro(id){
-            var tagTdId = id.replace("config__","");
-            $("#"+tagTdId).html($("#"+id).attr('rel'));
-        }
-		function save_intro(id){
-			$.ajax({
-				type:'POST',
-				url:'dict_edit.php',
-				data:'id='+id+'&intro='+$('#'+id).val()+'&databases='+databases,
-				success:function(msg){
-					if(msg==1){
-						alert('修改失败');
-					}else{
-						var obj = eval('('+msg+')');
-						$('#'+obj.table+'__'+obj.field).html($('#'+'config__'+obj.table+'__'+obj.field).val());
-					}
-				}
-			});
-		}
-
-		function edit_table(obj){
-			val = $.trim($('#'+obj['id']).html());
-			obj.innerHTML = '<input type="text" rel="'+val+'" value="'+val+'" id="edit__'+obj['id']+'" size="30" /><input type="button" value="修改" onclick="save_table_intro(\'edit__'+obj['id']+'\')" /><input type="button" value="取消" onclick="cancel_table_intro(\'edit__'+obj['id']+'\')" />';
-		}
-        function cancel_table_intro(id){
-            var tagSpanId = id.replace("edit__","");
-            $("#"+tagSpanId).html($("#"+id).attr('rel'));
-        }
-		function save_table_intro(obj){
-			$.ajax({
-				type:'POST',
-				url:'dict_edit.php',
-				data:'id='+obj+'&intro='+$('#'+obj).val()+'&type=table'+'&databases='+databases,
-				success:function(msg){
-					if(msg==1) alert('修改失败');
-					else
-					{
-						var obj = eval('('+msg+')');
-						$('#'+obj.id).html($('#edit__'+obj.id).val());
-					}
-				}
-			});
-		}
 		</script>
 	</head>
 	<body>
@@ -92,7 +53,7 @@
 		<table>
 			<caption>
 				<A NAME="<?=$table?>"><?=$table?></A>
-                (<span id="<?=$table?>" ondblclick="edit_table(this)"><?=isset($diyComment['table'][strtolower($table)])?$diyComment['table'][strtolower($table)]:"&nbsp;"?></span>)
+                (<div id="<?='table__'.$table?>" class="tableComment"><?=@$diyComment['table'][strtolower($table)]?></div>)
 			</caption>
 			<tbody>
 				<tr>
@@ -117,15 +78,15 @@
 					<td class="c3"><?=$info['column_default']?></td>
 					<td class="c4"><?=$info['collation_name']?></td>
 					<td class="c5"><?=$content?></td>
-					<td class="c6" id="<?=$table.'__'.$info['column_name']?>" ondblclick="edit(this)">
+					<td class="c6" id="<?=$table.'__'.$info['column_name']?>">
 						<?
 						if($line_show!="" && $config_show!=$line_show){
 							echo '<a class="tip" href="#" rel="tooltip" title="'.$line_show.'">差别</a>&nbsp;&nbsp;';
 						}
                         if($config_show=="" && $content!=""){
-                            echo "<input class='useDbComment' type='button' value='使用数据库注释'>";
+                            echo "<input class='useDbComment' type='button' value='使用数据库注释'><div></div>";
                         }else{
-                            echo $config_show;
+                            echo "<div>".$config_show."</div>";
                         }
                         ?>
                     </td>
@@ -153,14 +114,69 @@
                     url:'dict_edit.php',
                     data:'id='+obj+'&intro='+v+'&databases='+databases,
                     success:function(msg){
-                        if(msg==1){
-                            alert('修改失败');
+                        var output = eval('('+msg+')');
+                        if(output.error==true){
+                            alert(output.errorMessage);
                         }else{
-                            ele.html(v);
+                            $('#'+obj.table+'__'+obj.field).html(output.comment);
                         }
                     }
                 });
             });
+            function cancel_intro(id){
+                var tagTdId = id.replace("config__","");
+                $("#"+tagTdId).find("div").html($("#"+id).attr('rel')).siblings().show();
+            }
+            function save_intro(id){
+                $.ajax({
+                    type:'POST',
+                    url:'dict_edit.php',
+                    data:'id='+id+'&intro='+$('#'+id).val()+'&databases='+databases,
+                    success:function(msg){
+                        var output = eval('('+msg+')');
+                        if(output.error==true){
+                            alert(output.errorMessage);
+                        }else{
+                            $('#'+obj.table+'__'+obj.field).html(output.comment);
+                        }
+                    }
+                });
+            }
+            function cancel_table_intro(id){
+                var tagSpanId = id.replace("edit__","");
+                $("#"+tagSpanId).html($("#"+id).attr('rel'));
+            }
+            function save_table_intro(obj){
+                $.ajax({
+                    type:'POST',
+                    url:'dict_edit.php',
+                    data:'id='+obj+'&intro='+$('#'+obj).val()+'&type=table'+'&databases='+databases,
+                    success:function(msg){
+                        var output = eval('('+msg+')');
+                        if(output.error==true){
+                            alert(output.errorMessage);
+                        }else{
+                            $('#'+output.table+'__'+output.field).html(output.comment);
+                        }
+                    }
+                });
+            }
+            $("td.c6").bind('dblclick',function(){
+                var td = $(this);
+                var ele = td.find("div");
+                var id = 'config__'+td.attr('id');
+                val = $.trim(ele.html());
+                td.children().hide();
+                ele.html('<input type="text" rel="'+val+'" value="'+val+'" id="'+id+'" size="30" /><input type="button" value="修改" onclick="save_intro(\''+id+'\')" /><input type="button" value="取消" onclick="cancel_intro(\''+id+'\')" />').show();
+                $("#"+id).focus();
+            });
+            $("div.tableComment").bind('dblclick',function(){
+                var ele = $(this);
+                var editId = 'edit__'+ele.attr('id');
+                val = $.trim(ele.html());
+                ele.html('<input type="text" rel="'+val+'" value="'+val+'" id="'+editId+'" size="30" /><input type="button" value="修改" onclick="save_table_intro(\''+editId+'\')" /><input type="button" value="取消" onclick="cancel_table_intro(\''+editId+'\')" />').show();
+                $("#"+editId).focus();
+            });            
         </script>
 	</body>
 </html>

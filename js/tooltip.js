@@ -69,16 +69,21 @@
 
   , leave: function ( e ) {
       var self = $(e.currentTarget)[this.type](this._options).data(this.type)
-
       if (!self.options.delay || !self.options.delay.hide) {
         self.hide()
       } else {
         self.hoverState = 'out'
-        setTimeout(function() {
+        var timer = setTimeout(function() {
           if (self.hoverState == 'out') {
             self.hide()
           }
-        }, self.options.delay.hide)
+        }, self.options.delay.hide);
+        var $tip = this.tip();
+        $tip.on('mouseenter',function(){
+            clearTimeout(timer);
+        }).on('mouseleave',function(){
+            self.hide();
+        });
       }
     }
 
@@ -244,7 +249,7 @@
 
   $.fn.tooltip.defaults = {
     animation: true
-  , delay: 0
+  , delay: 30
   , selector: false
   , placement: 'top'
   , trigger: 'hover'
