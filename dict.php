@@ -166,65 +166,57 @@
 	        $('div.tip').tooltip({
 		        placement:'bottom'
 		    });
+            function changeComment(id,comment,database,type){
+                var data = 'id='+id+'&intro='+comment+'&databases='+database;
+                if(type=='table'){
+                    data += '&type=table';
+                }
+                $.ajax({
+                    type:'POST',
+                    url:'dict_edit.php',
+                    data:data,
+                    dataType:'json',
+                    success:function(output){
+                        if(output.error==true){
+                            alert(output.errorMessage);
+                        }else{
+                            $('#'+output.table+'__'+output.field).html(output.comment);
+                        }
+                    }
+                });
+            }
             $('.useDbComment').bind('click',function(){
                 var ele = $(this).parent();
                 var v = ele.prev().html();
                 var obj = 'config__'+ele.attr('id');
-                $.ajax({
-                    type:'POST',
-                    url:'dict_edit.php',
-                    data:'id='+obj+'&intro='+v+'&databases='+databases,
-                    dataType:'json',
-                    success:function(output){
-                        if(output.error==true){
-                            alert(output.errorMessage);
-                        }else{
-                            $('#'+output.table+'__'+output.field).html(output.comment);
-                        }
-                    }
-                });
+                changeComment(obj, v, this.database, null);
             });
             function cancel_intro(id){
                 var tagTdId = id.replace("config__","");
-                $("#"+tagTdId).find("div").html($("#"+id).attr('rel')).siblings().show();
+                $("#"+tagTdId).find("div:last").html($("#"+id).attr('rel')).siblings().show();
             }
+            
+            $('.tip').bind('dblclick',function(){
+				$(this).tooltip().hide();
+                var ele = $(this);
+                var v = ele.attr('data-original-title');
+                var obj = 'config__'+ele.parent('td').attr('id');
+                changeComment(obj, v, this.database, null);
+                event.stopPropagation();
+            });
             function save_intro(id){
-                $.ajax({
-                    type:'POST',
-                    url:'dict_edit.php',
-                    data:'id='+id+'&intro='+$('#'+id).val()+'&databases='+databases,
-                    dataType:'json',
-                    success:function(output){
-                        if(output.error==true){
-                            alert(output.errorMessage);
-                        }else{
-                            $('#'+output.table+'__'+output.field).html(output.comment);
-                        }
-                    }
-                });
+                changeComment(id, $('#'+id).val(), this.database, null);
             }
             function cancel_table_intro(id){
                 var tagSpanId = id.replace("edit__","");
                 $("#"+tagSpanId).html($("#"+id).attr('rel'));
             }
             function save_table_intro(obj){
-                $.ajax({
-                    type:'POST',
-                    url:'dict_edit.php',
-                    data:'id='+obj+'&intro='+$('#'+obj).val()+'&type=table'+'&databases='+databases,
-                    dataType:'json',
-                    success:function(output){
-                        if(output.error==true){
-                            alert(output.errorMessage);
-                        }else{
-                            $('#'+output.table+'__'+output.field).html(output.comment);
-                        }
-                    }
-                });
+                changeComment(obj, $('#'+obj).val(), this.database, 'table');
             }
             $("td.c6").bind('dblclick',function(){
                 var td = $(this);
-                var ele = td.find("div");
+                var ele = td.find("div:last");
                 var id = 'config__'+td.attr('id');
                 val = $.trim(ele.html());
                 td.children().hide();
