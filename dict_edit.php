@@ -1,4 +1,5 @@
 <?php
+defined('IN_DICT') or exit('Access Denied');
 require_once('model.php');
 
 $output = array(
@@ -9,7 +10,7 @@ $output = array(
     'comment'=>'',
 );
 //接收get参数
-if($_POST['id']==''){
+if(!isset($_POST['id']) || $_POST['id']==''){
     $output['error'] = true;
     $output['errorMessage'] = '参数错误,请检查参数';
 }else{
