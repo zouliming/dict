@@ -94,7 +94,7 @@ Class model {
          */
         function getConfigComment() {
                 $result = array();
-                $sql = "select * from dict_data where dbName = 'mtim_test' order by id asc";
+                $sql = "select * from dict_data where dbName = '{$this->dbConfig['database']}' order by id asc";
                 $info = $this->selectAll($sql, $this->commentLink);
                 if (is_array($info)) {
                         foreach ($info as $key => $value) {
@@ -110,7 +110,7 @@ Class model {
          */
         function getOnLineComment() {
                 $result = array();
-                $sql = "select * from data_tools where dbName = 'mtim_test' order by id asc";
+                $sql = "select * from data_tools where dbName = '{$this->dbConfig['database']}' order by id asc";
                 $info = $this->selectAll($sql, $this->dblink);
                 if (is_array($info)) {
                         foreach ($info as $key => $value) {
@@ -152,7 +152,7 @@ Class model {
          */
 
         function getDiyCommentInfo($table, $column) {
-                $sql = "select * from dict_data where dbName = 'mtim_test' and tableName = '{$table}' and columName =  '{$column}'";
+                $sql = "select * from dict_data where dbName = '{$this->dbConfig['database']}' and tableName = '{$table}' and columName =  '{$column}'";
                 return $this->selectRow($sql, $this->commentLink);
         }
 
@@ -161,7 +161,7 @@ Class model {
          */
 
         function updateColumnComment($comment, $table, $column) {
-                $sql = " update dict_data set content =  '{$comment}' where dbName = 'mtim_test' and tableName = '{$table}' and columName =  '{$column}'";
+                $sql = " update dict_data set content =  '{$comment}' where dbName = '{$this->dbConfig['database']}' and tableName = '{$table}' and columName =  '{$column}'";
                 return $this->execute($sql, $this->commentLink);
         }
 
@@ -170,7 +170,7 @@ Class model {
          */
 
         function insertColumnComment($comment, $table, $column) {
-                $sql = "insert into dict_data (dbName,tableName,columName,content) values ('mtim_test','{$table}','{$column}','{$comment}')";
+                $sql = "insert into dict_data (dbName,tableName,columName,content) values ('{$this->dbConfig['database']}','{$table}','{$column}','{$comment}')";
                 return $this->execute($sql, $this->commentLink);
         }
 
