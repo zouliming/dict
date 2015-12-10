@@ -44,6 +44,7 @@ defined('IN_DICT') or exit('Access Denied');
 
 		.c2 {
 			width: 120px;
+			word-break: break-word;
 		}
 
 		.c3 {
@@ -98,14 +99,15 @@ defined('IN_DICT') or exit('Access Denied');
 			border: 0 none;
 			color: #FFFFFF;
 			font-family: "Microsoft Yahei", "微软雅黑", "Verdana", "Simsun", "Segoe UI", "Segoe UI Web Regular", "Segoe UI Symbol", "Helvetica Neue", "BBAlpha Sans", "S60 Sans", "Arial", "sans-serif";
-			font-weight: 600;
-			line-height: 20px;
+			font-weight: 400;
+			line-height: 25px;
 			margin-right: 10px;
-			padding: 4px 14px;
+			padding: 4px 8px;
 			cursor: pointer;
 			font-size: 10pt;
 			position: relative;
 			display: inline-block;
+			border-radius: 3px;
 		}
 
 		.metro_btn_red {
@@ -115,7 +117,9 @@ defined('IN_DICT') or exit('Access Denied');
 		.metro_btn_green {
 			background-color: #01A31C;
 		}
-
+		.metro_btn_yellow{
+			background-color: #f39c12;
+		}
 		.metro_btn_blue {
 			background-color: #2D89F0;
 		}
@@ -182,7 +186,7 @@ foreach ($tableInfo as $table => $columns) {
 				<td class="c6" id="<?= $table . '__' . $info['column_name'] ?>">
 					<?php
 					if($config_show == "" && $content != "") {
-						echo "<a class='useDbComment button metro_btn_red'>使用数据库注释</a><div></div>";
+						echo "<a class='useDbComment button metro_btn_yellow'>使用数据库注释</a><div></div>";
 					} else {
 						echo "<div>" . $config_show . "</div>";
 					}
