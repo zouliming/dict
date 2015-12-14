@@ -102,7 +102,7 @@ defined('IN_DICT') or exit('Access Denied');
 			font-weight: 400;
 			line-height: 25px;
 			margin-right: 10px;
-			padding: 4px 8px;
+			padding: 2px 8px;
 			cursor: pointer;
 			font-size: 10pt;
 			position: relative;
@@ -111,7 +111,7 @@ defined('IN_DICT') or exit('Access Denied');
 		}
 
 		.metro_btn_red {
-			background-color: #BC1C48;
+			background-color: #e74c3c;
 		}
 
 		.metro_btn_green {
@@ -134,13 +134,27 @@ defined('IN_DICT') or exit('Access Denied');
 			outline: 0;
 			display: inline-block;
 			margin-right: 10px;
+			margin-left: 10px;
+			border-radius: 3px;
+		}
+		.pinned{
+			display: block;
+			z-index: 10;
+		}
+		.panel{
+			background-color: #16a085;
+			line-height: 40px;
+			padding-left: 20px;
+		}
+		.table_name_c{
+			font-weight:bold;
+			font-family: Microsoft Yahei;
 		}
 	</style>
 	<script src="js/jquery-1.8.1.min.js" type="text/javascript" language="javascript"></script>
 </head>
 <body>
 <?php
-//require DICT_ROOT . '/config/db.php';
 require_once('model.php');
 $bakFile = './bak/data.php';
 $model = new model($config);
@@ -155,11 +169,19 @@ if(!isset($_GET['fresh']) && is_file($bakFile)) {
 }
 foreach ($tableInfo as $table => $columns) {
 	?>
+		<div class="container">
+			<div class="pinned">
+				<div class="panel">
+					<A class="table_name_c" NAME="<?= $table ?>"><?= $table ?></A>
+					(<span id="<?= 'table__' . $table ?>" class="tableComment"><?= @$diyComment['table'][strtolower($table)] ?></span>)
+				</div>
+			</div>
+			<div>
 	<table>
-		<caption>
-			<A NAME="<?= $table ?>"><?= $table ?></A>
-			(<span id="<?= 'table__' . $table ?>" class="tableComment"><?= @$diyComment['table'][strtolower($table)] ?></span>)
-		</caption>
+<!--		<caption>-->
+<!--			<A NAME="--><?//= $table ?><!--">--><?//= $table ?><!--</A>-->
+<!--			(<span id="--><?//= 'table__' . $table ?><!--" class="tableComment">--><?//= @$diyComment['table'][strtolower($table)] ?><!--</span>)-->
+<!--		</caption>-->
 		<tbody>
 		<tr>
 			<th>字段名</th>
@@ -197,11 +219,13 @@ foreach ($tableInfo as $table => $columns) {
 		}
 		?>
 		</tbody>
-	</table>
+	</table></div>
+		</div>
 	<?php
 }
 ?>
 <script src="js/transition.js"></script>
+<script src="js/jquery.pin.min.js"></script>
 <script type="text/javascript">
 	var controlUrl = "index.php?page=control&action=edit";
 	function changeComment(id, comment, type) {
@@ -218,11 +242,12 @@ foreach ($tableInfo as $table => $columns) {
 				if (output.error == true) {
 					alert(output.errorMessage);
 				} else {
-					$('#' + output.table + '__' + output.field).html(output.comment);
+					$('#' + output.table + '__' + output.field).html("<div>"+output.comment+"</div>");
 				}
 			}
 		});
 	}
+	$(".pinned").pin({containerSelector: ".container", minWidth: 940});
 	$('.useDbComment').bind('click', function () {
 		var ele = $(this).parent();
 		var v = ele.prev().html();
@@ -247,16 +272,16 @@ foreach ($tableInfo as $table => $columns) {
 		var td = $(this);
 		var ele = td.find("div:last");
 		var id = 'config__' + td.attr('id');
-		val = $.trim(ele.html());
+		var val = $.trim(ele.html());
 		td.children().hide();
-		ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + id + '" size="30" /><a class="button metro_btn_green" onclick="save_intro(\'' + id + '\')">修改</a><a class="button metro_btn_blue" onclick="cancel_intro(\'' + id + '\')">取消</a>').show();
+		ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + id + '" size="30" /><a class="button metro_btn_red" onclick="save_intro(\'' + id + '\')">修改</a><a class="button metro_btn_blue" onclick="cancel_intro(\'' + id + '\')">取消</a>').show();
 		$("#" + id).focus();
 	});
 	$("span.tableComment").bind('dblclick', function () {
 		var ele = $(this);
 		var editId = 'edit__' + ele.attr('id');
-		val = $.trim(ele.html());
-		ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + editId + '" size="30" /><a class="button metro_btn_green" onclick="save_table_intro(\'' + editId + '\')">修改</a><a class="button metro_btn_blue" onclick="cancel_table_intro(\'' + editId + '\')">取消</a>').show();
+		var val = $.trim(ele.html());
+		ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + editId + '" size="30" /><a class="button metro_btn_red" onclick="save_table_intro(\'' + editId + '\')">修改</a><a class="button metro_btn_blue" onclick="cancel_table_intro(\'' + editId + '\')">取消</a>').show();
 		$("#" + editId).focus();
 	});
 </script>
