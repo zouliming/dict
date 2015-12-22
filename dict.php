@@ -165,7 +165,7 @@ if(!isset($_GET['fresh']) && is_file($bakFile)) {
 	$tableInfo = $model->getTableInfo();
 	$dataBak = "<?php\n\$tableInfo=" . var_export($tableInfo, true) . ";\n?>";
 	file_put_contents('./bak/data.php', $dataBak);
-	header("Location:dict.php");
+	header("Location:index.php");
 }
 foreach ($tableInfo as $table => $columns) {
 	?>
