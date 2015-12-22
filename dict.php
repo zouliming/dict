@@ -228,7 +228,12 @@ foreach ($tableInfo as $table => $columns) {
 <script src="js/jquery.pin.min.js"></script>
 <script type="text/javascript">
 	var controlUrl = "index.php?page=control&action=edit";
+	//用来标示正在编辑的元素，免得重复点击
+	var editArr = {};
 	function changeComment(id, comment, type) {
+		if(editArr.hasOwnProperty(id)){
+			delete editArr[id];
+		}
 		var data = 'id=' + id + '&intro=' + comment;
 		if (type == 'table') {
 			data += '&type=table';
@@ -255,6 +260,9 @@ foreach ($tableInfo as $table => $columns) {
 		changeComment(obj, v, null);
 	});
 	function cancel_intro(id) {
+		if(editArr.hasOwnProperty(id)){
+			delete editArr[id];
+		}
 		var tagTdId = id.replace("config__", "");
 		$("#" + tagTdId).find("div:last").html($("#" + id).attr('rel')).siblings().show();
 	}
@@ -262,6 +270,9 @@ foreach ($tableInfo as $table => $columns) {
 		changeComment(id, $('#' + id).val(), null);
 	}
 	function cancel_table_intro(id) {
+		if(editArr.hasOwnProperty(id)){
+			delete editArr[id];
+		}
 		var tagSpanId = id.replace("edit__", "");
 		$("#" + tagSpanId).html($("#" + id).attr('rel'));
 	}
@@ -272,17 +283,27 @@ foreach ($tableInfo as $table => $columns) {
 		var td = $(this);
 		var ele = td.find("div:last");
 		var id = 'config__' + td.attr('id');
-		var val = $.trim(ele.html());
-		td.children().hide();
-		ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + id + '" size="30" /><a class="button metro_btn_red" onclick="save_intro(\'' + id + '\')">修改</a><a class="button metro_btn_blue" onclick="cancel_intro(\'' + id + '\')">取消</a>').show();
-		$("#" + id).focus();
+		if(editArr.hasOwnProperty(id)){
+			return false;
+		}else{
+			editArr[id] = id;
+			var val = $.trim(ele.html());
+			td.children().hide();
+			ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + id + '" size="30" /><a class="button metro_btn_red" onclick="save_intro(\'' + id + '\')">修改</a><a class="button metro_btn_blue" onclick="cancel_intro(\'' + id + '\')">取消</a>').show();
+			$("#" + id).focus();
+		}
 	});
 	$("span.tableComment").bind('dblclick', function () {
 		var ele = $(this);
 		var editId = 'edit__' + ele.attr('id');
-		var val = $.trim(ele.html());
-		ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + editId + '" size="30" /><a class="button metro_btn_red" onclick="save_table_intro(\'' + editId + '\')">修改</a><a class="button metro_btn_blue" onclick="cancel_table_intro(\'' + editId + '\')">取消</a>').show();
-		$("#" + editId).focus();
+		if(editArr.hasOwnProperty(editId)){
+			return false;
+		}else{
+			editArr[editId] = editId;
+			var val = $.trim(ele.html());
+			ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + editId + '" size="30" /><a class="button metro_btn_red" onclick="save_table_intro(\'' + editId + '\')">修改</a><a class="button metro_btn_blue" onclick="cancel_table_intro(\'' + editId + '\')">取消</a>').show();
+			$("#" + editId).focus();
+		}
 	});
 </script>
 </body>
