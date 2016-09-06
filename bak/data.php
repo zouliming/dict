@@ -2221,7 +2221,7 @@ $tableInfo=array (
     ),
     2 => 
     array (
-      'column_key' => '',
+      'column_key' => 'MUL',
       'extra' => '',
       'column_name' => 'order_id',
       'column_type' => 'varchar(100)',
@@ -2291,7 +2291,7 @@ $tableInfo=array (
     ),
     9 => 
     array (
-      'column_key' => '',
+      'column_key' => 'MUL',
       'extra' => '',
       'column_name' => 'ps_time',
       'column_type' => 'int(10) unsigned',
@@ -2311,7 +2311,7 @@ $tableInfo=array (
     ),
     11 => 
     array (
-      'column_key' => '',
+      'column_key' => 'MUL',
       'extra' => '',
       'column_name' => 'status',
       'column_type' => 'enum(\'true\',\'false\')',
@@ -2331,7 +2331,7 @@ $tableInfo=array (
     ),
     13 => 
     array (
-      'column_key' => '',
+      'column_key' => 'MUL',
       'extra' => '',
       'column_name' => 'is_valid',
       'column_type' => 'enum(\'true\',\'false\')',
@@ -2441,7 +2441,7 @@ $tableInfo=array (
     ),
     24 => 
     array (
-      'column_key' => '',
+      'column_key' => 'MUL',
       'extra' => '',
       'column_name' => 'disabled',
       'column_type' => 'enum(\'true\',\'false\')',
@@ -4562,9 +4562,42 @@ $tableInfo=array (
     array (
       'column_key' => '',
       'extra' => '',
+      'column_name' => 'remarks',
+      'column_type' => 'longtext',
+      'column_default' => NULL,
+      'collation_name' => 'utf8_general_ci',
+      'column_comment' => '',
+    ),
+    15 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
       'column_name' => 'is_saved',
       'column_type' => 'enum(\'true\',\'false\')',
       'column_default' => 'false',
+      'collation_name' => 'utf8_general_ci',
+      'column_comment' => '',
+    ),
+  ),
+  'sdb_b2c_couponsinsert' => 
+  array (
+    0 => 
+    array (
+      'column_key' => 'PRI',
+      'extra' => 'auto_increment',
+      'column_name' => 'id',
+      'column_type' => 'mediumint(8) unsigned',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    1 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'coupon_code',
+      'column_type' => 'varchar(50)',
+      'column_default' => NULL,
       'collation_name' => 'utf8_general_ci',
       'column_comment' => '',
     ),
@@ -4913,7 +4946,7 @@ $tableInfo=array (
     ),
     34 => 
     array (
-      'column_key' => '',
+      'column_key' => 'MUL',
       'extra' => '',
       'column_name' => 'delivery_time',
       'column_type' => 'int(10) unsigned',
@@ -14117,7 +14150,7 @@ cancel:取消',
       'column_key' => 'PRI',
       'extra' => 'auto_increment',
       'column_name' => 'log_id',
-      'column_type' => 'mediumint(8) unsigned',
+      'column_type' => 'bigint(20) unsigned',
       'column_default' => NULL,
       'collation_name' => NULL,
       'column_comment' => '',
@@ -15538,7 +15571,7 @@ cancel:取消',
     ),
     67 => 
     array (
-      'column_key' => '',
+      'column_key' => 'MUL',
       'extra' => '',
       'column_name' => 'check_status',
       'column_type' => 'enum(\'0\',\'1\',\'2\')',
@@ -17893,6 +17926,99 @@ cancel:取消',
       'column_comment' => '',
     ),
   ),
+  'sdb_b2c_sku_stock' => 
+  array (
+    0 => 
+    array (
+      'column_key' => 'PRI',
+      'extra' => 'auto_increment',
+      'column_name' => 'id',
+      'column_type' => 'bigint(20) unsigned',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    1 => 
+    array (
+      'column_key' => 'MUL',
+      'extra' => '',
+      'column_name' => 'goods_id',
+      'column_type' => 'bigint(20) unsigned',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    2 => 
+    array (
+      'column_key' => 'MUL',
+      'extra' => '',
+      'column_name' => 'products_id',
+      'column_type' => 'mediumint(8) unsigned',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    3 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'current_quantity',
+      'column_type' => 'int(11)',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    4 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'limit_quantity',
+      'column_type' => 'int(11)',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    5 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'limit_date',
+      'column_type' => 'int(10) unsigned',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    6 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'createtime',
+      'column_type' => 'int(10) unsigned',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    7 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'updatetime',
+      'column_type' => 'int(10) unsigned',
+      'column_default' => '0',
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    8 => 
+    array (
+      'column_key' => 'MUL',
+      'extra' => '',
+      'column_name' => 'sale_area_id',
+      'column_type' => 'bigint(20) unsigned',
+      'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+  ),
   'sdb_b2c_spec_values' => 
   array (
     0 => 
@@ -18767,7 +18893,7 @@ cancel:取消',
     ),
     5 => 
     array (
-      'column_key' => '',
+      'column_key' => 'MUL',
       'extra' => '',
       'column_name' => 'ttl',
       'column_type' => 'int(10) unsigned',
@@ -20893,6 +21019,16 @@ cancel:取消',
       'extra' => '',
       'column_name' => 'cpns_type',
       'column_type' => 'enum(\'0\',\'1\',\'2\')',
+      'column_default' => NULL,
+      'collation_name' => 'utf8_general_ci',
+      'column_comment' => '',
+    ),
+    9 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'status',
+      'column_type' => 'enum(\'1\',\'2\',\'3\')',
       'column_default' => NULL,
       'collation_name' => 'utf8_general_ci',
       'column_comment' => '',
@@ -25669,6 +25805,16 @@ cancel:取消',
       'column_name' => 'create_time',
       'column_type' => 'int(10) unsigned',
       'column_default' => NULL,
+      'collation_name' => NULL,
+      'column_comment' => '',
+    ),
+    9 => 
+    array (
+      'column_key' => '',
+      'extra' => '',
+      'column_name' => 'sort',
+      'column_type' => 'mediumint(8) unsigned',
+      'column_default' => '1',
       'collation_name' => NULL,
       'column_comment' => '',
     ),

@@ -58,7 +58,7 @@ if(empty($action)){
 					$field = $output['field'] = $aryStr[1];
 				}
 				$res = $model->getDiyCommentInfo($table, $field);
-				if ($res['tableName'] != '' && $res['columName'] != '') {
+				if ($res['tableName'] != '' && $res['columnName'] != '') {
 					$model->updateColumnComment($_POST['intro'], $table, $field);
 				}else {
 					$model->insertColumnComment($_POST['intro'], $table, $field);
