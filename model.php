@@ -1,5 +1,5 @@
 <?php
-defined('IN_DICT') or exit('Access Denied');
+//defined('IN_DICT') or exit('Access Denied');
 
 Class model
 {
@@ -21,16 +21,16 @@ Class model
         if (!$this->commentDbConfig) {
             die("找不到对应的注释数据库配置");
         }
-        $this->dblink = @mysql_connect($this->dbConfig['host'], $this->dbConfig['username'], $this->dbConfig['password']) or die("MySql连接错误了，你是不是配置配错了啊？");
-        $this->commentLink = @mysql_connect($this->commentDbConfig['host'], $this->commentDbConfig['username'], $this->commentDbConfig['password']) or die("注释的数据库MySql连接错误了，你是不是配置配错了啊？");
+        $this->dblink = @mysqli_connect($this->dbConfig['host'], $this->dbConfig['username'], $this->dbConfig['password']) or die("MySql连接错误了，你是不是配置配错了啊？");
+        $this->commentLink = @mysqli_connect($this->commentDbConfig['host'], $this->commentDbConfig['username'], $this->commentDbConfig['password']) or die("注释的数据库MySql连接错误了，你是不是配置配错了啊？");
         $database = $this->dbConfig['database'];
         if (isset($_GET['db'])) {
             $database = $_GET['db'];
         }
-        mysql_select_db($database, $this->dblink);
-        mysql_query('SET NAMES utf8', $this->dblink);
-        mysql_query('SET NAMES utf8', $this->commentLink);
-        mysql_select_db('dict', $this->commentLink);
+        mysqli_select_db($this->dblink, $database);
+        mysqli_query($this->dblink, 'SET NAMES utf8');
+        mysqli_query($this->commentLink, 'SET NAMES utf8');
+        mysqli_select_db($this->commentLink, 'dict');
     }
 
     function selectAll($sql, $link)
@@ -38,15 +38,15 @@ Class model
         if (!isset($link)) {
             $link = $this->dblink;
         }
-        $result = mysql_query($sql, $link);
+        $result = mysqli_query($link, $sql);
         if ($result == false) {
-            die("查询时发生了错误：" . mysql_error($link) . "\nSQL:" . $sql);
+            die("查询时发生了错误：" . mysqli_error($link) . "\nSQL:" . $sql);
         }
         $r = array();
-        while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
             array_push($r, $row);
         }
-        mysql_free_result($result);
+        mysqli_free_result($result);
         return $r;
     }
 
@@ -55,13 +55,13 @@ Class model
         if (!isset($link)) {
             $link = $this->dblink;
         }
-        $result = mysql_query($sql, $link);
+        $result = mysqli_query($link,$sql);
         if ($result == false) {
-            die("查询时发生了错误:" . mysql_error($link) . "\nSQL:" . $sql);
+            die("查询时发生了错误:" . mysqli_error($link) . "\nSQL:" . $sql);
         }
         $r = array();
-        $row = mysql_fetch_array($result, MYSQL_NUM);
-        mysql_free_result($result);
+        $row = mysqli_fetch_array($result, MYSQLI_NUM);
+        mysqli_free_result($result);
         if ($row === false) {
             return false;
         } else {
@@ -74,12 +74,12 @@ Class model
         if (!isset($link)) {
             $link = $this->dblink;
         }
-        $result = mysql_query($sql, $link);
+        $result = mysqli_query($link,$sql);
         if ($result == false) {
-            die('查询时发生了错误: ' . mysql_error($link) . "\nSQL: " . $sql);
+            die('查询时发生了错误: ' . mysqli_error($link) . "\nSQL: " . $sql);
         }
-        $row = mysql_fetch_array($result, MYSQL_ASSOC);
-        mysql_free_result($result);
+        $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+        mysqli_free_result($result);
         return $row;
     }
 
@@ -88,10 +88,10 @@ Class model
         if (!isset($link)) {
             $link = $this->dblink;
         }
-        if (!mysql_query($sql, $link)) {
-            die('执行Sql发生了错误: ' . mysql_error($link) . "\nSQL: " . $sql);
+        if (!mysqli_query($link,$sql)) {
+            die('执行Sql发生了错误: ' . mysqli_error($link) . "\nSQL: " . $sql);
         }
-        return mysql_affected_rows($link);
+        return mysqli_affected_rows($link);
     }
 
     /**
@@ -135,11 +135,16 @@ Class model
     function getTableInfo()
     {
         $result = array();
-        $systemTables = @mysql_list_tables($this->dbConfig['database'], $this->dblink);
-        while ($tableList = @mysql_fetch_array($systemTables)) {
+        $list_tables_sql = "SHOW TABLES FROM {$this->dbConfig['database']};";
+        $systemTables = mysqli_query($this->dblink,$list_tables_sql,MYSQLI_USE_RESULT);
+        $tables = array();
+        while ($tableList = @mysqli_fetch_array($systemTables)) {
             $table = $tableList[0];
             if (strpos($table, 'iew') > 0)
                 continue;
+            array_push($tables,$table);
+        }
+        foreach ($tables as $table){
             $field_result = $this->selectAll("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '{$table}' AND table_schema = '{$this->dbConfig['database']}'", $this->dblink);
             foreach ($field_result as $columnInfo) {
                 $result[$table][] = array(
@@ -186,12 +191,6 @@ Class model
         return $this->execute($sql, $this->commentLink);
     }
 
-    //数据库是否有这条记录
-    function hasComment($table, $column)
-    {
-        $c = $this->selectOne("select count(*) from dict_data where tableName='{$table}' and columnName='{$column}'", $this->commentLink);
-        return $c > 0 ? true : false;
-    }
 }
 
 ?>

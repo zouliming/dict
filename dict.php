@@ -1,5 +1,5 @@
 <?php
-defined('IN_DICT') or exit('Access Denied');
+include_once 'init.php';
 ?>
 <html>
 <head>
@@ -160,6 +160,12 @@ defined('IN_DICT') or exit('Access Denied');
 </head>
 <body>
 <?php
+$dbfile = 'config/main.php';
+if(file_exists($dbfile)){
+    include_once 'config/main.php';
+}else{
+    header('Location:index.php');
+}
 require_once('model.php');
 $bakFile = './bak/data.php';
 $model = new model($config);
