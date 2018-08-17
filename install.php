@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>葵花宝典</title>
+    <title> 数据字典</title>
     <style>
         body {
             background-color: #1bc2a1;
