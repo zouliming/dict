@@ -7,6 +7,9 @@
 define('DICT_ROOT', str_replace("\\", '/', dirname(__FILE__)));
 define('IN_DICT', 1);
 
+ini_set('error_reporting',E_ALL);
+ini_set('display_errors','On');
+
 /**
  * 浏览器友好的变量输出
  * @param mixed $var 变量

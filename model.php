@@ -8,8 +8,8 @@ Class model
     //注释数据库配置
     private $commentDbConfig;
 
-    private $dblink; //数据库连接对象
-    private $commentLink; //注释数据库连接对象
+    private static $dblink; //数据库连接对象
+    private static $commentLink; //注释数据库连接对象
 
     function __construct($dbconfig)
     {
@@ -21,22 +21,22 @@ Class model
         if (!$this->commentDbConfig) {
             die("找不到对应的注释数据库配置");
         }
-        $this->dblink = @mysqli_connect($this->dbConfig['host'], $this->dbConfig['username'], $this->dbConfig['password']) or die("MySql连接错误了，你是不是配置配错了啊？");
-        $this->commentLink = @mysqli_connect($this->commentDbConfig['host'], $this->commentDbConfig['username'], $this->commentDbConfig['password']) or die("注释的数据库MySql连接错误了，你是不是配置配错了啊？");
+        self::$dblink = @mysqli_connect($this->dbConfig['host'], $this->dbConfig['username'], $this->dbConfig['password']) or die("MySql连接错误了，你是不是配置配错了啊？");
+        self::$commentLink = @mysqli_connect($this->commentDbConfig['host'], $this->commentDbConfig['username'], $this->commentDbConfig['password']) or die("注释的数据库MySql连接错误了，你是不是配置配错了啊？");
         $database = $this->dbConfig['database'];
         if (isset($_GET['db'])) {
             $database = $_GET['db'];
         }
-        mysqli_select_db($this->dblink, $database);
-        mysqli_query($this->dblink, 'SET NAMES utf8');
-        mysqli_query($this->commentLink, 'SET NAMES utf8');
-        mysqli_select_db($this->commentLink, 'dict');
+        mysqli_select_db(self::$dblink, $database);
+        mysqli_query(self::$dblink, 'SET NAMES utf8');
+        mysqli_query(self::$commentLink, 'SET NAMES utf8');
+        mysqli_select_db(self::$commentLink, $this->commentDbConfig['database']);
     }
 
     function selectAll($sql, $link)
     {
         if (!isset($link)) {
-            $link = $this->dblink;
+            $link = self::$dblink;
         }
         $result = mysqli_query($link, $sql);
         if ($result == false) {
@@ -53,7 +53,7 @@ Class model
     function selectOne($sql, $link)
     {
         if (!isset($link)) {
-            $link = $this->dblink;
+            $link = self::$dblink;
         }
         $result = mysqli_query($link,$sql);
         if ($result == false) {
@@ -72,7 +72,7 @@ Class model
     function selectRow($sql, $link)
     {
         if (!isset($link)) {
-            $link = $this->dblink;
+            $link = self::$dblink;
         }
         $result = mysqli_query($link,$sql);
         if ($result == false) {
@@ -86,7 +86,7 @@ Class model
     function execute($sql, $link)
     {
         if (!isset($link)) {
-            $link = $this->dblink;
+            $link = self::$dblink;
         }
         if (!mysqli_query($link,$sql)) {
             die('执行Sql发生了错误: ' . mysqli_error($link) . "\nSQL: " . $sql);
@@ -101,8 +101,8 @@ Class model
     function getConfigComment()
     {
         $result = array();
-        $sql = "select * from dict_data where dbName = '{$this->dbConfig['database']}' order by id asc";
-        $info = $this->selectAll($sql, $this->commentLink);
+        $sql = "select * from {$this->commentDbConfig['database']}.dict_data where dbName = '{$this->dbConfig['database']}' order by id asc";
+        $info = $this->selectAll($sql, self::$commentLink);
         if (is_array($info)) {
             foreach ($info as $key => $value) {
                 $result[$value['tableName']][$value['columnName']] = $value['content'];
@@ -119,7 +119,7 @@ Class model
     {
         $result = array();
         $sql = "select * from data_tools where dbName = '{$this->dbConfig['database']}' order by id asc";
-        $info = $this->selectAll($sql, $this->dblink);
+        $info = $this->selectAll($sql, self::$dblink);
         if (is_array($info)) {
             foreach ($info as $key => $value) {
                 $result[$value['tableName']][$value['columnName']] = $value['content'];
@@ -136,7 +136,7 @@ Class model
     {
         $result = array();
         $list_tables_sql = "SHOW TABLES FROM {$this->dbConfig['database']};";
-        $systemTables = mysqli_query($this->dblink,$list_tables_sql,MYSQLI_USE_RESULT);
+        $systemTables = mysqli_query(self::$dblink,$list_tables_sql,MYSQLI_USE_RESULT);
         $tables = array();
         while ($tableList = @mysqli_fetch_array($systemTables)) {
             $table = $tableList[0];
@@ -145,7 +145,7 @@ Class model
             array_push($tables,$table);
         }
         foreach ($tables as $table){
-            $field_result = $this->selectAll("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '{$table}' AND table_schema = '{$this->dbConfig['database']}'", $this->dblink);
+            $field_result = $this->selectAll("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '{$table}' AND table_schema = '{$this->dbConfig['database']}'", self::$dblink);
             foreach ($field_result as $columnInfo) {
                 $result[$table][] = array(
                     'column_key' => $columnInfo['COLUMN_KEY'],
@@ -168,7 +168,7 @@ Class model
     function getDiyCommentInfo($table, $column)
     {
         $sql = "select * from dict_data where dbName = '{$this->dbConfig['database']}' and tableName = '{$table}' and columnName =  '{$column}'";
-        return $this->selectRow($sql, $this->commentLink);
+        return $this->selectRow($sql, self::$commentLink);
     }
 
     /*
@@ -178,7 +178,7 @@ Class model
     function updateColumnComment($comment, $table, $column)
     {
         $sql = " update dict_data set content =  '{$comment}' where dbName = '{$this->dbConfig['database']}' and tableName = '{$table}' and columnName =  '{$column}'";
-        return $this->execute($sql, $this->commentLink);
+        return $this->execute($sql, self::$commentLink);
     }
 
     /*
@@ -188,7 +188,7 @@ Class model
     function insertColumnComment($comment, $table, $column)
     {
         $sql = "insert into dict_data (dbName,tableName,columnName,content) values ('{$this->dbConfig['database']}','{$table}','{$column}','{$comment}')";
-        return $this->execute($sql, $this->commentLink);
+        return $this->execute($sql, self::$commentLink);
     }
 
 }
