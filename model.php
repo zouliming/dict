@@ -167,7 +167,7 @@ Class model
 
     function getDiyCommentInfo($table, $column)
     {
-        $sql = "select * from dict_data where dbName = '{$this->dbConfig['database']}' and tableName = '{$table}' and columnName =  '{$column}'";
+        $sql = "select * from {$this->commentDbConfig['database']}.dict_data where dbName = '{$this->dbConfig['database']}' and tableName = '{$table}' and columnName =  '{$column}'";
         return $this->selectRow($sql, self::$commentLink);
     }
 
@@ -177,7 +177,7 @@ Class model
 
     function updateColumnComment($comment, $table, $column)
     {
-        $sql = " update dict_data set content =  '{$comment}' where dbName = '{$this->dbConfig['database']}' and tableName = '{$table}' and columnName =  '{$column}'";
+        $sql = " update {$this->commentDbConfig['database']}.dict_data set content =  '{$comment}' where dbName = '{$this->dbConfig['database']}' and tableName = '{$table}' and columnName =  '{$column}'";
         return $this->execute($sql, self::$commentLink);
     }
 
@@ -187,7 +187,7 @@ Class model
 
     function insertColumnComment($comment, $table, $column)
     {
-        $sql = "insert into dict_data (dbName,tableName,columnName,content) values ('{$this->dbConfig['database']}','{$table}','{$column}','{$comment}')";
+        $sql = "insert into {$this->commentDbConfig['database']}.dict_data (dbName,tableName,columnName,content) values ('{$this->dbConfig['database']}','{$table}','{$column}','{$comment}')";
         return $this->execute($sql, self::$commentLink);
     }
 

@@ -51,7 +51,7 @@ if (empty($action)) {
             break;
         case "edit":
             require_once('model.php');
-
+            $column_prefix = "comment_";
             $output = array(
                 'table' => 'table',
                 'field' => '',
@@ -60,31 +60,35 @@ if (empty($action)) {
                 'comment' => '',
             );
             //接收get参数
-            if (!isset($_POST['id']) || $_POST['id'] == '') {
+            if (!isset($_POST['table']) || $_POST['table'] == '' || !isset($_POST['column']) || $_POST['column'] == '') {
                 $output['error'] = true;
                 $output['errorMessage'] = '参数错误,请检查参数';
             } else {
-                $id = $_POST['id'];
+                $table = $_POST['table'];
+                $column = $_POST['column'];
                 $model = new model($config);
-                $table = "table";
                 $field = "";
-                if (isset($_POST['type']) && $_POST['type'] == 'table') {//代表是修改表注释信息
-                    $str = str_replace('edit__table__', '', $id);
-                    $field = $str;
-                    $output['field'] = $str;
+                if (isset($_POST['is_table']) && $_POST['is_table'] == 'true') {//代表是修改表注释信息
+                    $field = $table;
+                    $table = 'table';
+                    $output['table'] = $_POST['table'];
+                    $output['field'] = '';
+                    $output['is_table'] = true;
                 } else {//代表是修改字段信息
-                    $str = str_replace('config__', '', $id);
-                    $aryStr = explode('__', $str);
-                    $table = $output['table'] = $aryStr[0];
-                    $field = $output['field'] = $aryStr[1];
+                    $table = $output['table'] = $table;
+                    $field = $output['field'] = $column;
                 }
                 $res = $model->getDiyCommentInfo($table, $field);
                 if ($res['tableName'] != '' && $res['columnName'] != '') {
-                    $model->updateColumnComment($_POST['intro'], $table, $field);
+                    $rows = $model->updateColumnComment($_POST['intro'], $table, $field);
                 } else {
-                    $model->insertColumnComment($_POST['intro'], $table, $field);
+                    $rows = $model->insertColumnComment($_POST['intro'], $table, $field);
                 }
                 $output['comment'] = $_POST['intro'];
+            }
+            if($rows==0){
+                $output['error'] = true;
+                $output['errorMessage'] = '添加注释失败';
             }
             echo json_encode($output);
             break;

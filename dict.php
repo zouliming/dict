@@ -167,6 +167,8 @@ if(file_exists($dbfile)){
     header('Location:index.php');
 }
 require_once('model.php');
+$table_prefix = "table_";
+$column_prefix = "comment_";
 $bakFile = './bak/data.php';
 $model = new model($config);
 $diyComment = $model->getConfigComment();
@@ -184,7 +186,7 @@ foreach ($tableInfo as $table => $columns) {
         <div class="pinned">
             <div class="panel">
                 <A class="table_name_c" NAME="<?= $table ?>"><?= $table ?></A>
-                (<span id="<?= 'table__' . $table ?>" class="tableComment"><?= @$diyComment['table'][strtolower($table)] ?></span>)
+                (<span vt="<?= $table ?>" class="tableComment"><?= @$diyComment['table'][strtolower($table)] ?></span>)
             </div>
         </div>
         <div>
@@ -217,7 +219,7 @@ foreach ($tableInfo as $table => $columns) {
                         <td class="c3"><?= $info['column_default'] ?></td>
                         <td class="c4"><?= $info['collation_name'] ?></td>
                         <td class="c5"><?= $content ?></td>
-                        <td class="c6" id="<?= $table . '__' . $info['column_name'] ?>">
+                        <td class="c6" vt="<?php echo $table;?>" vc="<?php echo $info['column_name'];?>">
                             <?php
                             if ($config_show == "" && $content != "") {
                                 echo "<a class='useDbComment button metro_btn_yellow'>使用数据库注释</a><div></div>";
@@ -241,81 +243,132 @@ foreach ($tableInfo as $table => $columns) {
 <script src="js/jquery.pin.min.js"></script>
 <script type="text/javascript">
     var controlUrl = "index.php?page=control&action=edit";
+    var column_prefix = "<?php echo $column_prefix?>";
     //用来标示正在编辑的元素，免得重复点击
     var editArr = {};
-    function changeComment(id, comment, type) {
-        if (editArr.hasOwnProperty(id)) {
-            delete editArr[id];
-        }
-        var data = 'id=' + id + '&intro=' + comment;
-        if (type == 'table') {
-            data += '&type=table';
-        }
-        $.ajax({
-            type: 'POST',
-            url: controlUrl,
-            data: data,
-            dataType: 'json',
-            success: function (output) {
-                if (output.error == true) {
-                    alert(output.errorMessage);
-                } else {
-                    $('#' + output.table + '__' + output.field).html("<div>" + output.comment + "</div>");
-                }
+
+    var mod = {
+        changeComment:function(table,column, comment, type) {
+            if (editArr.hasOwnProperty(table+column)) {
+                delete editArr[table+column];
             }
-        });
-    }
+            var data = {
+                table:table,
+                column:column,
+                intro:comment,
+                is_table:false
+            };
+
+            if (type == 'table') {
+                data.is_table = true;
+            }
+            $.ajax({
+                type: 'POST',
+                url: controlUrl,
+                data: data,
+                dataType: 'json',
+                success: function (output) {
+                    if (output.error == true) {
+                        alert(output.errorMessage);
+                    } else {
+                        if(output.is_table){
+                            mod.find_table_ele(table).html(output.comment);
+                        }else{
+                            mod.find_column_ele(table,column).html("<div>" + output.comment + "</div>");
+                        }
+                    }
+                }
+            });
+        },
+        find_table_ele:function(table){
+            return $(".tableComment[vt='"+table+"']");
+        },
+        find_column_ele:function(table,column){
+            return $("td.c6[vt='"+table+"'][vc='"+column+"']");
+        },
+        save_intro:function(table,column) {
+            mod.changeComment(table,column, $('#' + table+'_'+column).val(), null);
+        },
+        cancel_intro:function(table,column) {
+            this.remove_column_cache(table,column);
+            var original_comment = $("#" + table+"_"+column).attr('rel');
+            $("td.c6[vt='"+table+"'][vc='"+column+"']").find("div:last").html(original_comment).siblings().show();
+        },
+        cancel_table_intro:function(table) {
+            this.remove_table_cache(table);
+            var originnal_comment = $("#table" + table).attr('rel');
+            $(".tableComment[vt='"+table+"']").html(originnal_comment);
+        },
+        save_table_intro:function(table) {
+            var new_comment = $('#table'+table).val();
+            mod.changeComment(table,'empty', new_comment, 'table');
+        },
+        check_table_cache:function (table) {
+            if (editArr.hasOwnProperty(table+'empty')) {
+                return true;
+            }
+        },
+        remove_table_cache:function (table) {
+            if (editArr.hasOwnProperty(table+'empty')) {
+                delete editArr[table+'empty'];
+            }
+        },
+        set_table_cache:function (table) {
+            editArr[table+'empty'] = '1';
+        },
+        check_column_cache:function (table,column) {
+            if (editArr.hasOwnProperty(table+column)) {
+                return true;
+            }
+        },
+        set_column_cache:function (table,column) {
+            editArr[table+column] = '1';
+        },
+        remove_column_cache:function (table,column) {
+            if (editArr.hasOwnProperty(table+column)) {
+                delete editArr[table+column];
+            }
+        }
+    };
     $(".pinned").pin({containerSelector: ".container", minWidth: 940});
     $('.useDbComment').bind('click', function () {
         var ele = $(this).parent();
         var v = ele.prev().html();
-        var obj = 'config__' + ele.attr('id');
-        changeComment(obj, v, null);
+        var obj = ele.attr('id');
+        mod.changeComment(obj, v, null);
     });
-    function cancel_intro(id) {
-        if (editArr.hasOwnProperty(id)) {
-            delete editArr[id];
-        }
-        var tagTdId = id.replace("config__", "");
-        $("#" + tagTdId).find("div:last").html($("#" + id).attr('rel')).siblings().show();
-    }
-    function save_intro(id) {
-        changeComment(id, $('#' + id).val(), null);
-    }
-    function cancel_table_intro(id) {
-        if (editArr.hasOwnProperty(id)) {
-            delete editArr[id];
-        }
-        var tagSpanId = id.replace("edit__", "");
-        $("#" + tagSpanId).html($("#" + id).attr('rel'));
-    }
-    function save_table_intro(obj) {
-        changeComment(obj, $('#' + obj).val(), 'table');
-    }
+    //修改字段注释
     $("td.c6").bind('dblclick', function () {
         var td = $(this);
         var ele = td.find("div:last");
-        var id = 'config__' + td.attr('id');
-        if (editArr.hasOwnProperty(id)) {
+        var table = td.attr('vt');
+        var column = td.attr('vc');
+        if (mod.check_column_cache(table,column)) {
             return false;
         } else {
-            editArr[id] = id;
+            mod.set_column_cache(table,column);
             var val = $.trim(ele.html());
             td.children().hide();
-            ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + id + '" size="30" /><a class="button metro_btn_red" onclick="save_intro(\'' + id + '\')">修改</a><a class="button metro_btn_blue" onclick="cancel_intro(\'' + id + '\')">取消</a>').show();
-            $("#" + id).focus();
+            ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" size="30" id="'+table+"_"+column+'" />' +
+                '<a class="button metro_btn_red" onclick="mod.save_intro(\'' + table+ '\',\''+column + '\')">修改</a>' +
+                '<a class="button metro_btn_blue" onclick="mod.cancel_intro(\'' + table+ '\',\''+column + '\')">取消</a>').show();
+            $("#" + table+"_"+column).focus();
         }
     });
+    //修改表注释
     $("span.tableComment").bind('dblclick', function () {
         var ele = $(this);
-        var editId = 'edit__' + ele.attr('id');
-        if (editArr.hasOwnProperty(editId)) {
+        var table = ele.attr('vt');
+        var edit_id = 'table'+table;
+        if (mod.check_table_cache(table)) {
             return false;
         } else {
-            editArr[editId] = editId;
+            mod.set_table_cache(table);
             var val = $.trim(ele.html());
-            ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + editId + '" size="30" /><a class="button metro_btn_red" onclick="save_table_intro(\'' + editId + '\')">修改</a><a class="button metro_btn_blue" onclick="cancel_table_intro(\'' + editId + '\')">取消</a>').show();
-            $("#" + editId).focus();
+            ele.html('<input class="metro_text" type="text" rel="' + val + '" value="' + val + '" id="' + edit_id + '" size="30" />' +
+                '<a class="button metro_btn_red" onclick="mod.save_table_intro(\''+table + '\')">修改</a>' +
+                '<a class="button metro_btn_blue" onclick="mod.cancel_table_intro(\''+table + '\')">取消</a>').show();
+            $("#" + edit_id).focus();
         }
     });
 </script>
