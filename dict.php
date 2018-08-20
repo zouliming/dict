@@ -333,9 +333,10 @@ foreach ($tableInfo as $table => $columns) {
     $(".pinned").pin({containerSelector: ".container", minWidth: 940});
     $('.useDbComment').bind('click', function () {
         var ele = $(this).parent();
+        var table = ele.attr('vt');
+        var column = ele.attr('vc');
         var v = ele.prev().html();
-        var obj = ele.attr('id');
-        mod.changeComment(obj, v, null);
+        mod.changeComment(table,column, v);
     });
     //修改字段注释
     $("td.c6").bind('dblclick', function () {
